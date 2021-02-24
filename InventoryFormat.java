@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * <h2>気分転換に作成したものです...</h2>
- * <h2>つまり使われません(´･ω･`)</h2>
+ * このClassはインベントリ作成を直感的に作成することができるプラグインです
+ * 
  * formatは {@link InventoryFormat#format(String title, String format, Item... items)} として使います。<br>
  * <br>
  * {@link String title} はGUIのタイトルを決めてください。<br>
