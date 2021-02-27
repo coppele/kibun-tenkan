@@ -1,5 +1,3 @@
-package coppele.dailytasks;
-
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
