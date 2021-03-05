@@ -7,5 +7,3 @@ the-kibuntencan-classes は
 2. 使いたいクラスを選びソースコード丸こぴ
 3. 作成したクラスにペタ
 4. あとはいい感じに利用するだけです(´･ω･`)
-
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="クリエイティブ・コモンズ・ライセンス" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
