@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * このClassはインベントリ作成を直感的に作成することができます。<br>
+ * このClassはインベントリ作成を直感的に作成することができます。
  * <br>
  * formatは {@link InventoryFormat#format(String title, String format, Item... items)} として使います。<br>
  * <br>
