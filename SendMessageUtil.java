@@ -14,21 +14,21 @@ import org.bukkit.plugin.java.JavaPlugin;
  * ですが使う際は最初に PREFIX と PLUGIN を設定しておくと良さげです( ´･ω･`)b<br>
  * ( なのでユーティリティというわけではなさそうです... )<br>
  * <br>
- * 注意: {@link SendMessageUtil#sendHoverMessage(CommandSender, String, String)} や、<br>
- *      {@link SendMessageUtil#sendHoverClickMessage(CommandSender, String, String, String)}<br>
- *      {@link SendMessageUtil#sendActionbar(CommandSender, String)}<br>
- *      {@link SendMessageUtil#format(String)}<br>
- *      {@link SendMessageUtil#parse(Component)}<br>
+ * 注意: {@link SendMessage#sendHoverMessage(CommandSender, String, String)} や、<br>
+ *      {@link SendMessage#sendHoverClickMessage(CommandSender, String, String, String)}<br>
+ *      {@link SendMessage#sendActionbar(CommandSender, String)}<br>
+ *      {@link SendMessage#format(String)}<br>
+ *      {@link SendMessage#parse(Component)}<br>
  *      はPaper用となっています、ご了承くださいませ...(´･ω･`)
  * 
  * @author coppele
  * @version 1.0
  */
-public class SendMessageUtil {
+public class SendMessage {
     public static String PREFIX = "";
     public static JavaPlugin PLUGIN = null;
 
-    private SendMessageUtil() {}
+    private SendMessage() {}
 
     ///////////////////////////////////////////////////////////////////////////
     //            自動でセットします。
