@@ -1,6 +1,9 @@
 # the-kibuntencan-classes
 the-kibuntencan-classes は
 気分転換に作成された使い道が一切判らないclass達です(´･ω･`)
+注意事項
+・このクラス達は気分転換に作成された為、もしかすると動作しないかもしれません(´･ω･`)
+　その場合 @coppelepan までご報告ください٩( 'ω' )و 
 
 ## 使い方/Usage
 1. クラスを自分で作成する
