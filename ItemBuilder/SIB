@@ -1,0 +1,365 @@
+import com.destroystokyo.paper.Namespaced;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Consumer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * <h2>アイテムを簡単に作成できます！</h2>
+ * さらにメソッド名が短くなったのでたくさん並べられます(*´ω`*)<br>
+ * <br>
+ * 短くなっただけなので扱いは {@link ItemBuilder} と同じです...(´･ω･`)<br>
+ * なお {@link ItemBuilder} からの継承などはしていない為、どちらかのみでも正常に動作します...٩('ω')و
+ *
+ * @author coppele
+ * @version 1.0
+ */
+public class SIB {
+
+    private final ItemStack i;
+    private final ItemMeta m;
+    private Boolean r;
+
+    public SIB(Material t) {
+        i = new ItemStack(t);
+        m = i.getItemMeta();
+    }
+    public SIB(Material t,String d) {
+        this(t);
+        setDN(d);
+    }
+    public SIB(Material t,String d, int a) {
+        this(t, d);
+        setA(a);
+    }
+    public SIB(Material t,String d,List<String> l) {
+        this(t, d);
+        if (l.isEmpty()) return;
+        setL(l);
+    }
+    public SIB(Material t,String d,String... l) {
+        this(t, d, Arrays.asList(l));
+    }
+    private SIB(ItemStack i) {
+        this.i = i.clone();
+        this.m = this.i.getItemMeta();
+    }
+
+    public <M extends ItemMeta> SIB setC(Class<M> c, Consumer<M> f) {
+        f.accept(c.cast(m));
+        return setM();
+    }
+
+    public SIB setT(Material t) {
+        i.setType(t);
+        return setM();
+    }
+    public Material getT() {
+        return i.getType();
+    }
+
+    public SIB setA(int a) {
+        i.setAmount(a);
+        return setM();
+    }
+    public int getA() {
+        return i.getAmount();
+    }
+
+    public SIB mD(MaterialData d) {
+        i.setData(d);
+        return setM();
+    }
+    public MaterialData getMD() {
+        return i.getData();
+    }
+
+    public SIB setDN(String n) {
+        m.displayName(Component.text(n));
+        return setM();
+    }
+    public boolean hasDN() {
+        return setR(m.hasDisplayName());
+    }
+    public String getDN() {
+        if (!hasDN()) return null;
+        TextComponent text = (TextComponent) m.displayName();
+        if (text == null) return null;
+        return text.content();
+    }
+
+    public SIB setL(String... l) {
+        return setL(Arrays.asList(l));
+    }
+    public SIB setL(List<String> l) {
+        m.lore(l.stream().map(Component::text).collect(Collectors.toList()));
+        return setM();
+    }
+    public boolean hasL() {
+        return setR(m.hasLore());
+    }
+    public List<String> getL() {
+        List<Component> lore = m.lore();
+        if (lore == null) return new ArrayList<>();
+        return lore.stream().map(Component::insertion).collect(Collectors.toList());
+    }
+
+    public SIB setCMD(int d) {
+        m.setCustomModelData(d);
+        return setM();
+    }
+    public int getCMD() {
+        return m.getCustomModelData();
+    }
+
+    public SIB setD(int d) {
+        ((Damageable) m).setDamage(d);
+        return setM();
+    }
+    public boolean hasD() {
+        return setR(((Damageable) m).hasDamage());
+    }
+    public int getD() {
+        return ((Damageable) m).getDamage();
+    }
+
+    public SIB setU(boolean u) {
+        m.setUnbreakable(u);
+        return setM();
+    }
+    public boolean isU() {
+        return setR(m.isUnbreakable());
+    }
+
+    public SIB addE(Enchantment e, int l) {
+        return addE(e, l, true);
+    }
+    public SIB addE(Enchantment e, int l, boolean i) {
+        setR(m.addEnchant(e, l, i));
+        return setM();
+    }
+    public boolean hasE(Enchantment e) {
+        return setR(m.hasEnchant(e));
+    }
+    public boolean hasEs() {
+        return setR(m.hasEnchants());
+    }
+    public int getELv(Enchantment e) {
+        return m.getEnchantLevel(e);
+    }
+    public Map<Enchantment, Integer> getEs() {
+        return m.getEnchants();
+    }
+    public SIB removeE(Enchantment e) {
+        setR(m.removeEnchant(e));
+        return setM();
+    }
+
+    public SIB addIFs(ItemFlag... f) {
+        m.addItemFlags(f);
+        return setM();
+    }
+    public boolean hasIF(ItemFlag f) {
+        return setR(m.hasItemFlag(f));
+    }
+    public Set<ItemFlag> getIFs() {
+        return m.getItemFlags();
+    }
+    public SIB removeIFs(ItemFlag... f) {
+        m.removeItemFlags(f);
+        return setM();
+    }
+
+    public SIB addAM(Attribute a, double amo, AttributeModifier.Operation o) {
+        return addAM(a, amo, o, null);
+    }
+    public SIB addAM(Attribute a, double amo, AttributeModifier.Operation o, EquipmentSlot s) {
+        return addAM(a, new AttributeModifier(UUID.randomUUID(), a.getKey().getKey(), amo, o, s));
+    }
+    public SIB addAM(Attribute a, AttributeModifier am) {
+        setR(m.addAttributeModifier(a, am));
+        return setM();
+    }
+    public boolean hasAMs() {
+        return setR(m.hasAttributeModifiers());
+    }
+    public Multimap<Attribute, AttributeModifier> getAMs() {
+        Multimap<Attribute, AttributeModifier> Modifiers = m.getAttributeModifiers();
+        if (Modifiers == null) Modifiers = ArrayListMultimap.create();
+        return Modifiers;
+    }
+    public Multimap<Attribute, AttributeModifier> getAMs(EquipmentSlot s) {
+        return m.getAttributeModifiers(s);
+    }
+    public Collection<AttributeModifier> getAMs(Attribute a) {
+        return m.getAttributeModifiers(a);
+    }
+    public SIB removeAM(EquipmentSlot s) {
+        setR(m.removeAttributeModifier(s));
+        return setM();
+    }
+    public SIB removeAM(Attribute a) {
+        setR(m.removeAttributeModifier(a));
+        return setM();
+    }
+    public SIB removeAM(Attribute a, AttributeModifier am) {
+        setR(m.removeAttributeModifier(a, am));
+        return setM();
+    }
+
+    public SIB addCPK(String n) {
+        Set<Namespaced> places = getCPKs();
+        if (setR(places.add(NamespacedKey.minecraft(n)))) m.setPlaceableKeys(places);
+        return setM();
+    }
+    public SIB setCPKs(Set<Material> s) {
+        m.setPlaceableKeys(s.stream().map(Material::getKey).collect(Collectors.toList()));
+        return setM();
+    }
+    public boolean hasCDK(NamespacedKey k) {
+        return setR(getCDKs().contains(k));
+    }
+    public boolean hasCPKs() {
+        return setR(m.hasPlaceableKeys());
+    }
+    public Set<Namespaced> getCPKs() {
+        return m.getPlaceableKeys();
+    }
+    public SIB removeCPK(Material t) {
+        Set<Namespaced> places = getCPKs();
+        if (setR(places.remove(t.getKey()))) m.setPlaceableKeys(places);
+        return setM();
+    }
+
+    public SIB addCDK(Material t) {
+        Set<Namespaced> destroys = getCDKs();
+        if (setR(destroys.add(t.getKey()))) m.setDestroyableKeys(destroys);
+        return setM();
+    }
+    public SIB setCDKs(Set<Material> s) {
+        m.setDestroyableKeys(s.stream().map(Material::getKey).collect(Collectors.toList()));
+        return setM();
+    }
+    public boolean hasCDKs() {
+        return setR(m.hasDestroyableKeys());
+    }
+    public Set<Namespaced> getCDKs() {
+        return m.getDestroyableKeys();
+    }
+    public SIB removeCDK(Material t) {
+        Set<Namespaced> destroys = getCDKs();
+        if (setR(destroys.remove(t.getKey()))) m.setDestroyableKeys(destroys);
+        return setM();
+    }
+
+    public SIB setPDC(NamespacedKey k, String v) {
+        getPDC().set(k, PersistentDataType.STRING, v);
+        return setM();
+    }
+    public <T, Z> SIB setPDC(NamespacedKey k, PersistentDataType<T, Z> t, Z v) {
+        getPDC().set(k, t, v);
+        return setM();
+    }
+    public <T, Z> boolean hasPDC(NamespacedKey k,PersistentDataType<T, Z> t) {
+        return setR(getPDC().has(k, t));
+    }
+    public PersistentDataContainer getPDC() {
+        return m.getPersistentDataContainer();
+    }
+    public <T, Z> Z getPDC(NamespacedKey k,PersistentDataType<T, Z> t) {
+        return getPDC().get(k, t);
+    }
+
+
+
+    private SIB setM() {
+        i.setItemMeta(m);
+        return this;
+    }
+    private boolean setR(boolean b) {
+        if (!b) r = false;
+        return b;
+    }
+    public Boolean result() {
+        return r;
+    }
+    public ItemStack toIS() {
+        return setM().i;
+    }
+    public static SIB fromIS(ItemStack i) {
+        return new SIB(i);
+    }
+    @Override
+    public SIB clone() {
+        try {
+            return (SIB) super.clone();
+        } catch (CloneNotSupportedException | ClassCastException ignored) {
+        }
+        SIB builder = new SIB(toIS().clone());
+        builder.setR(r);
+        return builder;
+    }
+    @Override
+    public String toString() {
+        return toIS().toString();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof SIB)) {
+            return false;
+        }
+        SIB builder = (SIB) obj;
+        return setR(builder.i.equals(i) && builder.r == r);
+    }
+
+    public Item drop(Location l) {
+        return l.getWorld().dropItem(l, toIS());
+    }
+
+    public Inventory give(Player p) {
+        Inventory inv = p.getInventory();
+        ItemStack item = toIS();
+        if ((inv.contains(item) || inv.firstEmpty() != -1)) inv.addItem(item);
+        return inv;
+    }
+    public Inventory giveOD(Player p) {
+        return giveOD(p, p.getLocation());
+    }
+    public Inventory giveOD(Player p,Location l) {
+        Inventory inv = p.getInventory();
+        ItemStack item = toIS();
+        if (inv.contains(item) || inv.firstEmpty() != -1) inv.addItem(item);
+        else drop(l);
+        return inv;
+    }
+}
