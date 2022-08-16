@@ -29,7 +29,7 @@ public final class EventExecutor extends JavaPlugin {
         register(this, listener, PlayerJoinEvent.class, event -> {
 
             var player = event.getPlayer();
-            player.sendMessage("いらっしゃいませこんにちは！マイクに向かってこんにちは！");
+            player.sendMessage("いらっしゃいませコンニチハ。マイクに向かってコンニチハ！！");
 
         }, EventPriority.NORMAL, false);
 
