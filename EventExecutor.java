@@ -5,6 +5,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Consumer;
@@ -13,8 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * {@link Event イベント}を {@link Consumer} でさくっと登録できます(´･ω･`)b<br>
- * 基本的なシステムは {@link org.bukkit.plugin.SimplePluginManager#registerEvent} などを参考にさせていただいています。
+ * <h2>{@link Event イベント}を {@link Consumer} でさくっと登録できます(´･ω･`)b</h2>
+ * 
+ * 基本的なシステムは {@link org.bukkit.plugin.SimplePluginManager#registerEvent} などを参考にさせていただいています。<br>
+ * 中身は {@link #register} {@link #getHandlerList} の二つのみですが、staticなのでどこでも使えます(´･ω･`)
  */
 public final class EventExecutor extends JavaPlugin {
 
@@ -23,7 +26,7 @@ public final class EventExecutor extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        register(listener, PlayerJoinEvent.class, event -> {
+        register(this, listener, PlayerJoinEvent.class, event -> {
 
             var player = event.getPlayer();
             player.sendMessage("いらっしゃいませこんにちは！マイクに向かってこんにちは！");
@@ -34,22 +37,23 @@ public final class EventExecutor extends JavaPlugin {
 
     /**
      * {@link Event}を登録します(´･ω･`)
-     * @param listener {@link HandlerList#unregister(Listener)} などで解除する際に使う {@link Listener} を決めてください！
+     * @param plugin {@link Plugin} を入れるだけです。{@link HandlerList#unregister(Plugin)} などで解除する際に使えます(´･ω･`)b
+     * @param listener {@link Listener} を入れるだけです。{@link HandlerList#unregister(Listener)} などで解除する際に使えます(´･ω･`)b
      * @param clazz どのイベントにするかを選んでください！
      * @param consumer 実行内容を決めてください！
      * @param priority {@link EventPriority} を参考に設定してください。
      * @param ignoreCancelled すでにキャンセルされていた場合実行されなくなります。優先度については{@link EventPriority}を参考に...
      * @throws IllegalPluginAccessException clazz に Event.getHandlerList() が無い場合にスローされます。
      */
-    public <E extends Event> void register(Listener listener, Class<E> clazz, Consumer<E> consumer, EventPriority priority, boolean ignoreCancelled) {
+    public static  <E extends Event> void register(Plugin plugin, Listener listener, Class<E> clazz, Consumer<E> consumer, EventPriority priority, boolean ignoreCancelled) {
         try {
 
             var method = getHandlerList(clazz);
             method.setAccessible(true);
             var handler = (HandlerList) method.invoke(null);
 
-            var executor = new TimedEventExecutor((also, event) -> consumer.accept(clazz.cast(event)), this, null, clazz);
-            handler.register(new RegisteredListener(listener, executor, priority, this, ignoreCancelled));
+            var executor = new TimedEventExecutor((also, event) -> consumer.accept(clazz.cast(event)), plugin, null, clazz);
+            handler.register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
 
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new IllegalPluginAccessException(e.toString());
