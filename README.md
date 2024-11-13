@@ -1,4 +1,6 @@
 ## 注意事項
 気分転換に作成された為、もしかすると動作しないかもしれません(´･ω･\`)
 
-関係はないですが、技術的なことをまとめた[Wiki](https://github.com/coppele/kibun-tenkan/wiki)も置いてありますヽ(´･ω･`)ﾉ
+> [!NOTE]
+> 上のタブからも開けますが、技術的なことをまとめたwikiも置いてありますヽ(´･ω･`)ﾉ
+> https://github.com/coppele/kibun-tenkan/wiki
